@@ -1,4 +1,5 @@
-let myLibrary = [];
+/* const myLibrary = JSON.parse(localStorage.getItem('myLibrary')) || []; */
+const bookArray = toBook(JSON.parse(localStorage.getItem('myLibrary'))) || [];
 
 function Book(title, author, rating, status) {
     this.title = title;
@@ -6,6 +7,33 @@ function Book(title, author, rating, status) {
     this.rating = rating;
     this.status = status;
 }
+
+Book.prototype.opositeStatus = function() {
+    
+    if (this.status == 'read') {
+        return 'unread';
+    }else {
+        return 'read';
+    }
+}
+
+function toBook(array) {
+    let bookArray = [];
+    for(let i = 0; i < array.length; i++) {
+        let book = new Book();
+        book.title = array[i].title;
+        book.author = array[i].author;
+        book.status = array[i].status;
+        book.rating = array[i].rating;
+        bookArray.push(book);
+    }
+    return bookArray;
+}
+
+const saveLibrary = (array) => {
+    localStorage.setItem('myLibrary', JSON.stringify(array));
+}
+
 
 function createBookTag(attribute, container, book) {
     const element = document.createElement('div');
@@ -24,19 +52,10 @@ function buildRemoveButton(container, main_container) {
     })
 }
 
-Book.prototype.opositeStatus = function() {
-    
-    if (this.status == 'read') {
-        return 'unread';
-    }else {
-        return 'read';
-    }
-}
-
 function readStatus(container, book, library) {
     const read = document.createElement('div');
     read.classList.add('read-status');
-    console.log(book.opositeStatus());
+
     read.innerHTML = `Mark as ${book.opositeStatus()}`;
     container.appendChild(read);
     read.addEventListener('click', () => {
@@ -82,25 +101,19 @@ function removeBook(array, element) {
     }
 }
 
-
-
-/* submit fields filled out */
-
 const addBook = (ev)=>{
-    ev.preventDefault(); // to stop the form submitting
+    ev.preventDefault(); // to stop the form submitting 
     let book = new Book();
-  
     book.title = document.getElementById('title').value;
     book.author = document.getElementById('author').value;
     book.rating = document.getElementById('rating').value;
     book.status = document.getElementById('status').value;
 
-    myLibrary.push(book);
+    bookArray.push(book);
     document.querySelector('form').reset();
-
-    console.warn('added', {myLibrary} );
-    display_books(myLibrary); 
-
+    
+    display_books(bookArray);
+    saveLibrary(bookArray);
   
 }
 
@@ -108,6 +121,7 @@ const submitButton = document.getElementById('submit');
 
 submitButton.addEventListener('click', addBook);
 
-display_books(myLibrary);    
+
+display_books(bookArray);    
 
 
