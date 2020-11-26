@@ -24,10 +24,20 @@ function buildRemoveButton(container, main_container) {
     })
 }
 
+Book.prototype.opositeStatus = function() {
+    
+    if (this.status == 'read') {
+        return 'unread';
+    }else {
+        return 'read';
+    }
+}
+
 function readStatus(container, book, library) {
     const read = document.createElement('div');
     read.classList.add('read-status');
-    read.innerHTML = `<span> Status: </span> ${book.status}`;
+    console.log(book.opositeStatus());
+    read.innerHTML = `Mark as ${book.opositeStatus()}`;
     container.appendChild(read);
     read.addEventListener('click', () => {
         if (book.status == 'read') {
@@ -35,7 +45,7 @@ function readStatus(container, book, library) {
         }else {
             book.status = 'read'
         }
-        read.innerHTML = `<span> Status: </span> ${book.status}`;
+        read.innerHTML = `Mark as ${book.opositeStatus()}`;
         display_books(library);
     })
 }
