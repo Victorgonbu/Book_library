@@ -42,12 +42,7 @@ body {
 }
 
 .read-status {
-
-}
-
-.read-book {
-    content: 'Read';
-    background-color: red;
+    border: 1px solid black;
 }
 
 .book-card span {

@@ -24,7 +24,7 @@ function buildRemoveButton(container, main_container) {
     })
 }
 
-function readStatus(container, book) {
+function readStatus(container, book, library) {
     const read = document.createElement('div');
     read.classList.add('read-status');
     read.innerHTML = `<span> Status: </span> ${book.status}`;
@@ -36,22 +36,32 @@ function readStatus(container, book) {
             book.status = 'read'
         }
         read.innerHTML = `<span> Status: </span> ${book.status}`;
+        display_books(library);
     })
 }
 
 
-function display_books(book) {
-    
-    const main_container = document.querySelector('.books');
+function display_books(library) {
 
-    const container = document.createElement('div');
-    container.classList.add('book-card');
-    main_container.appendChild(container);
-    createBookTag('title', container, book);
-    createBookTag('author', container, book);
-    createBookTag('rating', container, book);
-    buildRemoveButton(container, main_container);
-    readStatus(container, book);
+    const main_container = document.querySelector('.books');
+    
+    while(main_container.firstChild){
+        main_container.removeChild(main_container.firstChild);
+    }
+
+    for (let i = 0; i < library.length; i++) {
+        const container = document.createElement('div');
+        container.classList.add('book-card');
+        main_container.appendChild(container);
+        createBookTag('title', container, library[i]);
+        createBookTag('author', container, library[i]);
+        createBookTag('rating', container, library[i]);
+        createBookTag('status', container, library[i]);
+    
+        buildRemoveButton(container, main_container);
+        readStatus(container, library[i], library);
+    }
+    
 }
 
 function removeBook(array, element) {
@@ -79,13 +89,15 @@ const addBook = (ev)=>{
     document.querySelector('form').reset();
 
     console.warn('added', {myLibrary} );
+    display_books(myLibrary); 
 
-    display_books(book);    
+  
 }
 
 const submitButton = document.getElementById('submit');
 
 submitButton.addEventListener('click', addBook);
 
+display_books(myLibrary);    
 
 
