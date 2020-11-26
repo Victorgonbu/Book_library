@@ -1,28 +1,15 @@
 let myLibrary = [];
 
-function Book(title, release, rate) {
+function Book(title, author, rating, status) {
     this.title = title;
-    this.release = release;
-    this.rate = rate;
-
+    this.author = author;
+    this.rating = rating;
+    this.status = status;
 }
 
-function createBookTag(span, container, book) {
+function createBookTag(attribute, container, book) {
     const element = document.createElement('div');
-    const label = document.createElement('span');
-    label.textContent = span + ':';
-    container.appendChild(label);
-
-    if (span == 'title') {
-        
-        element.textContent = book.title;
-
-    } else if(span == 'release') {
-        element.textContent = book.release;
-    } else {
-        element.textContent = book.rate;
-    }
-
+    element.innerHTML = `<span>${attribute}: </span> ${book[attribute]}`;
     container.appendChild(element);
 }
 
@@ -37,13 +24,18 @@ function buildRemoveButton(container, main_container) {
     })
 }
 
-function readStatus(container) {
+function readStatus(container, book) {
     const read = document.createElement('div');
     read.classList.add('read-status');
-    read.innerHTML = "<span> Status: </span> Unread"
+    read.innerHTML = `<span> Status: </span> ${book.status}`;
     container.appendChild(read);
     read.addEventListener('click', () => {
-        read.classList.toggle('read-book')
+        if (book.status == 'read') {
+            book.status = 'unread'
+        }else {
+            book.status = 'read'
+        }
+        read.innerHTML = `<span> Status: </span> ${book.status}`;
     })
 }
 
@@ -56,10 +48,10 @@ function display_books(book) {
     container.classList.add('book-card');
     main_container.appendChild(container);
     createBookTag('title', container, book);
-    createBookTag('release', container, book);
-    createBookTag('rate', container, book); 
+    createBookTag('author', container, book);
+    createBookTag('rating', container, book);
     buildRemoveButton(container, main_container);
-    readStatus(container);
+    readStatus(container, book);
 }
 
 function removeBook(array, element) {
@@ -70,45 +62,7 @@ function removeBook(array, element) {
     }
 }
 
-/* ADD BOOK POP UP */
 
-const openModalButtons = document.querySelectorAll('[data-modal-target]');
-const closeModalButtons = document.querySelectorAll('[data-close-button]');
-
-const overlay = document.getElementById('overlay');
-
-openModalButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const modal = document.querySelector(button.dataset.modalTarget);
-        openModal(modal);
-    })
-})
-
-closeModalButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const modal = button.closest('.modal');
-        closeModal(modal);
-    })
-})
-
-overlay.addEventListener('click', () => {
-    const modals = document.querySelectorAll('.modal.active');
-    modals.forEach(modal => {
-        closeModal(modal);
-    })
-})
-
-function openModal(modal) {
-    if (modal == null) return;
-    modal.classList.add('active');
-    overlay.classList.add('active');
-}
-
-function closeModal(modal) {
-    if (modal == null) return;
-    modal.classList.remove('active');
-    overlay.classList.remove('active');
-}
 
 /* submit fields filled out */
 
@@ -117,15 +71,16 @@ const addBook = (ev)=>{
     let book = new Book();
   
     book.title = document.getElementById('title').value;
-    book.release = document.getElementById('release').value;
-    book.rate = document.getElementById('rate').value;
+    book.author = document.getElementById('author').value;
+    book.rating = document.getElementById('rating').value;
+    book.status = document.getElementById('status').value;
 
     myLibrary.push(book);
     document.querySelector('form').reset();
 
     console.warn('added', {myLibrary} );
 
-    display_books(book);
+    display_books(book);    
 }
 
 const submitButton = document.getElementById('submit');

@@ -24,12 +24,19 @@
                 <input type="text" id="title">
             </div>
             <div class="field">
-                <label for="release">Release date</label>
-                <input type="date" id="release">
+                <label for="author">Author</label>
+                <input type="text" id="author">
             </div>
             <div class="field">
-                <label for="rate">Rate</label>
-                <input type="text" id="rate">
+                <label for="rating">Rating</label>
+                <input type="text" id="rating">
+            </div>
+            <div class="field">
+                <label for="status">Status</label>
+                <select name="status" id="status">
+                    <option value="Read" selected="selected">Read</option>
+                    <option value="Unread"  >Unread</option>
+                </select>
             </div>
             <input data-close-button type="submit" id="submit">
            
@@ -43,5 +50,6 @@
     </div>
 
    <script src="assets/scripts/script.js"></script> 
+   <script src="assets/scripts/modal.js"></script>
 </body>
 </html>
