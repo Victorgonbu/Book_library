@@ -1,5 +1,5 @@
-/* const myLibrary = JSON.parse(localStorage.getItem('myLibrary')) || []; */
-const bookArray = toBook(JSON.parse(localStorage.getItem('myLibrary'))) || [];
+
+const bookArray = retrieveStorage(JSON.parse(localStorage.getItem('myLibrary')));
 
 function Book(title, author, rating, status) {
     this.title = title;
@@ -17,8 +17,10 @@ Book.prototype.opositeStatus = function() {
     }
 }
 
-function toBook(array) {
+function retrieveStorage(array) {
     let bookArray = [];
+    if (array) { 
+    
     for(let i = 0; i < array.length; i++) {
         let book = new Book();
         book.title = array[i].title;
@@ -28,6 +30,10 @@ function toBook(array) {
         bookArray.push(book);
     }
     return bookArray;
+    }else {
+        return bookArray = [];
+    }
+   
 }
 
 const saveLibrary = (array) => {
@@ -41,7 +47,7 @@ function createBookTag(attribute, container, book) {
     container.appendChild(element);
 }
 
-function buildRemoveButton(container, main_container) {
+const buildRemoveButton = (container, main_container, book) => {
     const removeButton = document.createElement('button');
     removeButton.classList.add('remove-book');
     container.appendChild(removeButton);
@@ -49,6 +55,9 @@ function buildRemoveButton(container, main_container) {
 
     removeButton.addEventListener('click', () => {
         main_container.removeChild(container);
+        let index = bookArray.indexOf(book);
+        bookArray.splice(index, 1);
+        saveLibrary(bookArray);
     })
 }
 
@@ -66,6 +75,7 @@ function readStatus(container, book, library) {
         }
         read.innerHTML = `Mark as ${book.opositeStatus()}`;
         display_books(library);
+        saveLibrary(library);
     })
 }
 
@@ -87,7 +97,7 @@ function display_books(library) {
         createBookTag('rating', container, library[i]);
         createBookTag('status', container, library[i]);
     
-        buildRemoveButton(container, main_container);
+        buildRemoveButton(container, main_container, library[i]);
         readStatus(container, library[i], library);
     }
     
