@@ -39,7 +39,7 @@ protoLibrary = () => {
         localStorage.setItem('myLibrary', JSON.stringify(bookArray));
     }
 
-    function readStatus(container, book, library) {
+    function readStatus(container, book) {
         const read = document.createElement('div');
         read.classList.add('read-status');
 
@@ -89,14 +89,15 @@ protoLibrary = () => {
         }
     
         for (let i = 0; i < bookArray.length; i++) {
+            const bookAttributes = ['title', 'author', 'rating', 'status'];
             const container = document.createElement('div');
             container.classList.add('book-card');
             main_container.appendChild(container);
-            createBookTag('title', container, bookArray[i]);
-            createBookTag('author', container, bookArray[i]);
-            createBookTag('rating', container, bookArray[i]);
-            createBookTag('status', container, bookArray[i]);
-        
+            
+            bookAttributes.forEach((tagClass) => {
+                createBookTag(tagClass, container, bookArray[i]);
+            });
+            
             buildRemoveButton(container, main_container, bookArray[i]);
             readStatus(container, bookArray[i], bookArray);
         }
@@ -127,14 +128,12 @@ protoLibrary = () => {
     
 }
 
-const submitButton = document.getElementById('submit');
+let firstLibrary = [];
+const myLibrary = library(firstLibrary);
 
-let bookArray = [];
-
-let myLibrary = library(bookArray);
 myLibrary.retrieveStorage();
 myLibrary.displayBooks();
 
-
+const submitButton = document.getElementById('submit');
 submitButton.addEventListener('click', myLibrary.addBook);
 
