@@ -1,3 +1,10 @@
+const Book = (title, author, rating, status) => {
+    let bookObject = Object.assign(Object.create(protoBook), {
+        title, author, rating, status
+    }); 
+
+    return bookObject;
+}
 
 const protoBook = {
     opositeStatus: function() {
@@ -5,19 +12,9 @@ const protoBook = {
         return 'read';
     }
 }
-const Book = (title, author, rating, status) => {
-    let bookObject = Object.assign(Object.create(protoBook), {
-        title, author, rating, status
-    }); 
-
-    return bookObject;
- 
-}
 
 const library = (bookArray) => {
-    //const bookArray = retrieveStorage(JSON.parse(localStorage.getItem('myLibrary')));
-    
-    let libraryObj = Object.assign(Object.create(protoLibrary()), {
+     let libraryObj = Object.assign(Object.create(protoLibrary()), {
         bookArray
     });
 
@@ -28,9 +25,20 @@ const library = (bookArray) => {
 protoLibrary = () => {
 
     // private 
-    console.log(bookArray)
-    console.log('chamo');
+
+    function retrieveStorage() {
+        if(!localStorage.getItem('myLibrary')) bookArray = [];
+        bookArray = JSON.parse(localStorage.getItem('myLibrary'));
+        for (let i = 0; i < bookArray.length; i++) {
+            let book = bookArray[i];
+            bookArray[i] = Book(book.title, book.author, book.rating, book.status); 
+        }
+    } 
     
+    const saveLibrary = () => {
+        localStorage.setItem('myLibrary', JSON.stringify(bookArray));
+    }
+
     function readStatus(container, book, library) {
         const read = document.createElement('div');
         read.classList.add('read-status');
@@ -45,7 +53,7 @@ protoLibrary = () => {
             }
             read.innerHTML = `Mark as ${book.opositeStatus()}`;
             displayBooks();
-           // saveLibrary(library);
+            saveLibrary();
         })
     }
 
@@ -60,7 +68,7 @@ protoLibrary = () => {
             main_container.removeChild(container);
             let index = bookArray.indexOf(book);
             bookArray.splice(index, 1);
-            // saveLibrary(bookArray);
+            saveLibrary();
         })
     }
 
@@ -107,49 +115,24 @@ protoLibrary = () => {
         document.querySelector('form').reset();
         
         displayBooks();
-        // saveLibrary(bookArray);
+        saveLibrary();
     }
 
     return {
         addBook,
-        displayBooks
+        displayBooks,
+        retrieveStorage
     }
 
     
 }
-
-
-/* function retrieveStorage(array) {
-    let bookArray = [];
-    if (array) { 
-    
-    for(let i = 0; i < array.length; i++) {
-        let book = new Book();
-        book.title = array[i].title;
-        book.author = array[i].author;
-        book.status = array[i].status;
-        book.rating = array[i].rating;
-        bookArray.push(book);
-    }
-    return bookArray;
-    }else {
-        return bookArray = [];
-    }
-   
-} 
-
-const saveLibrary = (array) => {
-    localStorage.setItem('myLibrary', JSON.stringify(array));
-}
-*/
 
 const submitButton = document.getElementById('submit');
-
 
 let bookArray = [];
 
 let myLibrary = library(bookArray);
-console.log(myLibrary);
+myLibrary.retrieveStorage();
 myLibrary.displayBooks();
 
 
