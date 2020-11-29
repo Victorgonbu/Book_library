@@ -1,119 +1,105 @@
+const protoBook = {
+  opositeStatus() {
+    if (this.status === 'read') return 'unread';
+    return 'read';
+  },
+};
 
-const bookArray = retrieveStorage(JSON.parse(localStorage.getItem('myLibrary')));
+const Book = (title, author, rating, status) => {
+  const bookObject = Object.assign(Object.create(protoBook), {
+    title, author, rating, status,
+  });
 
-function Book(title, author, rating, status) {
-    this.title = title;
-    this.author = author;
-    this.rating = rating;
-    this.status = status;
-}
+  return bookObject;
+};
 
-Book.prototype.opositeStatus = function() {
-    
-    if (this.status == 'read') {
-        return 'unread';
-    }else {
-        return 'read';
+const protoLibrary = () => {
+  let { bookArray } = this;
+
+  function retrieveStorage() {
+    if (localStorage.getItem('myLibrary')) {
+      bookArray = JSON.parse(localStorage.getItem('myLibrary'));
+      for (let i = 0; i < bookArray.length; i += 1) {
+        const book = bookArray[i];
+        bookArray[i] = Book(book.title, book.author, book.rating, book.status);
+      }
+    } else {
+      bookArray = [];
     }
-}
+  }
 
-function retrieveStorage(array) {
-    let bookArray = [];
-    if (array) { 
-    
-    for(let i = 0; i < array.length; i++) {
-        let book = new Book();
-        book.title = array[i].title;
-        book.author = array[i].author;
-        book.status = array[i].status;
-        book.rating = array[i].rating;
-        bookArray.push(book);
-    }
-    return bookArray;
-    }else {
-        return bookArray = [];
-    }
-   
-}
+  const saveLibrary = () => {
+    localStorage.setItem('myLibrary', JSON.stringify(bookArray));
+  };
 
-const saveLibrary = (array) => {
-    localStorage.setItem('myLibrary', JSON.stringify(array));
-}
+  function readStatus(container, book) {
+    const read = document.createElement('div');
+    const readStatus = container.querySelector('.status');
+    read.classList.add('read-status');
+
+    read.innerHTML = `Mark as ${book.opositeStatus()}`;
+    container.appendChild(read);
+    read.addEventListener('click', () => {
+      if (book.status === 'read') {
+        book.status = 'unread';
+      } else {
+        book.status = 'read';
+      }
+      readStatus.innerHTML = `<span>Status: </span> ${book.status}`;
+      read.innerHTML = `Mark as ${book.opositeStatus()}`;
+      saveLibrary();
+    });
+  }
 
 
-function createBookTag(attribute, container, book) {
-    const element = document.createElement('div');
-    element.innerHTML = `<span>${attribute}: </span> ${book[attribute]}`;
-    container.appendChild(element);
-}
-
-const buildRemoveButton = (container, main_container, book) => {
+  const buildRemoveButton = (container, mainContainer, book) => {
     const removeButton = document.createElement('button');
     removeButton.classList.add('remove-book');
     container.appendChild(removeButton);
     removeButton.innerHTML = "<span class='remove-x' >&times;</span>";
 
     removeButton.addEventListener('click', () => {
-        main_container.removeChild(container);
-        let index = bookArray.indexOf(book);
-        bookArray.splice(index, 1);
-        saveLibrary(bookArray);
-    })
-}
-
-function readStatus(container, book, library) {
-    const read = document.createElement('div');
-    read.classList.add('read-status');
-
-    read.innerHTML = `Mark as ${book.opositeStatus()}`;
-    container.appendChild(read);
-    read.addEventListener('click', () => {
-        if (book.status == 'read') {
-            book.status = 'unread'
-        }else {
-            book.status = 'read'
-        }
-        read.innerHTML = `Mark as ${book.opositeStatus()}`;
-        display_books(library);
-        saveLibrary(library);
-    })
-}
+      mainContainer.removeChild(container);
+      const index = bookArray.indexOf(book);
+      bookArray.splice(index, 1);
+      saveLibrary();
+    });
+  };
 
 
-function display_books(library) {
+  function createBookTag(attribute, container, bookIndex) {
+    const book = bookArray[bookIndex];
+    const element = document.createElement('div');
+    element.classList.add(attribute);
+    element.innerHTML = `<span>${attribute}: </span> ${book[attribute]}`;
+    container.appendChild(element);
+  }
 
-    const main_container = document.querySelector('.books');
-    
-    while(main_container.firstChild){
-        main_container.removeChild(main_container.firstChild);
+  function displayBooks() {
+    const mainContainer = document.querySelector('.books');
+
+    while (mainContainer.firstChild) {
+      mainContainer.removeChild(mainContainer.firstChild);
     }
 
-    for (let i = 0; i < library.length; i++) {
-        const container = document.createElement('div');
-        container.classList.add('book-card');
-        main_container.appendChild(container);
-        createBookTag('title', container, library[i]);
-        createBookTag('author', container, library[i]);
-        createBookTag('rating', container, library[i]);
-        createBookTag('status', container, library[i]);
-    
-        buildRemoveButton(container, main_container, library[i]);
-        readStatus(container, library[i], library);
-    }
-    
-}
+    for (let i = 0; i < bookArray.length; i += 1) {
+      const bookAttributes = ['title', 'author', 'rating', 'status'];
+      const container = document.createElement('div');
+      container.classList.add('book-card');
+      mainContainer.appendChild(container);
 
-function removeBook(array, element) {
-    const index = array.indexOf(element);
-  
-    if (index !== -1) {
-      array.splice(index, 1);
-    }
-}
+      bookAttributes.forEach((tagClass) => {
+        createBookTag(tagClass, container, i);
+      });
 
-const addBook = (ev)=>{
-    ev.preventDefault(); // to stop the form submitting 
-    let book = new Book();
+      buildRemoveButton(container, mainContainer, bookArray[i]);
+      readStatus(container, bookArray[i]);
+    }
+  }
+
+  const addBook = (ev) => {
+    ev.preventDefault(); // to stop the form submitting
+    const book = Book();
     book.title = document.getElementById('title').value;
     book.author = document.getElementById('author').value;
     book.rating = document.getElementById('rating').value;
@@ -121,17 +107,31 @@ const addBook = (ev)=>{
 
     bookArray.push(book);
     document.querySelector('form').reset();
-    
-    display_books(bookArray);
-    saveLibrary(bookArray);
-  
-}
+
+    displayBooks();
+    saveLibrary();
+  };
+
+  return {
+    addBook,
+    displayBooks,
+    retrieveStorage,
+  };
+};
+
+const library = (bookArray) => {
+  const libraryObj = Object.assign(Object.create(protoLibrary()), {
+    bookArray,
+  });
+
+  return libraryObj;
+};
+
+const firstLibrary = [];
+const myLibrary = library(firstLibrary);
+
+myLibrary.retrieveStorage();
+myLibrary.displayBooks();
 
 const submitButton = document.getElementById('submit');
-
-submitButton.addEventListener('click', addBook);
-
-
-display_books(bookArray);    
-
-
+submitButton.addEventListener('click', myLibrary.addBook);
