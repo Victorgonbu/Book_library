@@ -1,5 +1,5 @@
 ![](https://img.shields.io/badge/Microverse-blueviolet)
-# JS-LIBRARY
+# BOOK LIBRARY
 Library Application Built Using JavaSrcipt, CSS and HTML
 
 This projects implements the use of JavaScript concepts about Object Constructors, Factory Functions and Classes. This book app code was rewritten in all the different metioned JS patterns.
