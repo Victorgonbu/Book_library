@@ -4,7 +4,9 @@ Library Application Built Using JavaSrcipt, CSS and HTML
 
 This projects implements the use of JavaScript concepts about Object Constructors, Factory Functions and Classes. This book app code was rewritten in all the different metioned JS patterns.
 
-Any user can, add a New Book by filling out all required fields, delete any previous book added and lasty update any book status.
+Any user can, add a New Book by filling out all required fields, delete any previous book added and lasty update any book status.  
+  
+![APP SCREENSHOT](assets/images/BOOK_APP_SCREENSHOT.png)  
 
 
 ## Built With
@@ -16,7 +18,7 @@ Any user can, add a New Book by filling out all required fields, delete any prev
 
 ## Live Demo
 
-[Live Demo Link]()
+[Live Demo Link](https://shaqri.github.io/Book_library/?status=read)
 
 
 ## Getting Started
