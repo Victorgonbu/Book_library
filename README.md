@@ -6,7 +6,7 @@ This projects implements the use of JavaScript concepts about Object Constructor
 
 Any user can, add a New Book by filling out all required fields, delete any previous book added and lasty update any book status.  
   
-![APP SCREENSHOT](assets/images/BOOK_APP_SCREENSHOT.png)  
+![APP SCREENSHOT](assets/Images/BOOK_APP_SCREENSHOT.png)  
 
 
 ## Built With
