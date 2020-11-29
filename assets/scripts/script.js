@@ -17,11 +17,14 @@ const protoLibrary = () => {
   let { bookArray } = this;
 
   function retrieveStorage() {
-    if (!localStorage.getItem('myLibrary')) bookArray = [];
-    bookArray = JSON.parse(localStorage.getItem('myLibrary'));
-    for (let i = 0; i < bookArray.length; i += 1) {
-      const book = bookArray[i];
-      bookArray[i] = Book(book.title, book.author, book.rating, book.status);
+    if (localStorage.getItem('myLibrary')) {
+      bookArray = JSON.parse(localStorage.getItem('myLibrary'));
+      for (let i = 0; i < bookArray.length; i += 1) {
+        const book = bookArray[i];
+        bookArray[i] = Book(book.title, book.author, book.rating, book.status);
+      }
+    } else {
+      bookArray = [];
     }
   }
 
