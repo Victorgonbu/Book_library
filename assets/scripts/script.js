@@ -1,38 +1,37 @@
-const protoBook = {
+// Class
+class Book {
+  constructor(title, author, rating, status) {
+    this.title = title;
+    this.author = author;
+    this.rating = rating;
+    this.status = status;
+  }
   opositeStatus() {
     if (this.status === 'read') return 'unread';
     return 'read';
-  },
-};
+  }
+}
 
-const Book = (title, author, rating, status) => {
-  const bookObject = Object.assign(Object.create(protoBook), {
-    title, author, rating, status,
-  });
+class Library {
+  constructor(bookArray) {
+    this.bookArray = bookArray;
+  }
 
-  return bookObject;
-};
-
-const protoLibrary = () => {
-  let { bookArray } = this;
-
-  function retrieveStorage() {
+  retrieveStorage() {
     if (localStorage.getItem('myLibrary')) {
-      bookArray = JSON.parse(localStorage.getItem('myLibrary'));
-      for (let i = 0; i < bookArray.length; i += 1) {
-        const book = bookArray[i];
-        bookArray[i] = Book(book.title, book.author, book.rating, book.status);
+      this.bookArray = JSON.parse(localStorage.getItem('myLibrary'));
+      for (let i = 0; i < this.bookArray.length; i += 1) {
+        const book = this.bookArray[i];
+        this.bookArray[i] = new Book(book.title, book.author, book.rating, book.status);
       }
-    } else {
-      bookArray = [];
     }
   }
 
-  const saveLibrary = () => {
-    localStorage.setItem('myLibrary', JSON.stringify(bookArray));
-  };
-
-  function readStatus(container, book) {
+  saveLibrary() {
+    localStorage.setItem('myLibrary', JSON.stringify(this.bookArray));
+  }
+  
+  readStatus(container, book) {
     const read = document.createElement('div');
     const readStatus = container.querySelector('.status');
     read.classList.add('read-status');
@@ -47,12 +46,12 @@ const protoLibrary = () => {
       }
       readStatus.innerHTML = `<span>Status: </span> ${book.status}`;
       read.innerHTML = `Mark as ${book.opositeStatus()}`;
-      saveLibrary();
+      this.saveLibrary();
     });
   }
 
 
-  const buildRemoveButton = (container, mainContainer, book) => {
+  buildRemoveButton(container, mainContainer, book) {
     const removeButton = document.createElement('button');
     removeButton.classList.add('remove-book');
     container.appendChild(removeButton);
@@ -60,78 +59,67 @@ const protoLibrary = () => {
 
     removeButton.addEventListener('click', () => {
       mainContainer.removeChild(container);
-      const index = bookArray.indexOf(book);
-      bookArray.splice(index, 1);
-      saveLibrary();
+      const index = this.bookArray.indexOf(book);
+      this.bookArray.splice(index, 1);
+      this.saveLibrary();
     });
-  };
+  }
 
 
-  function createBookTag(attribute, container, bookIndex) {
-    const book = bookArray[bookIndex];
+  createBookTag(attribute, container, bookIndex) {
+    const book = this.bookArray[bookIndex];
     const element = document.createElement('div');
     element.classList.add(attribute);
     element.innerHTML = `<span>${attribute}: </span> ${book[attribute]}`;
     container.appendChild(element);
   }
 
-  function displayBooks() {
+  displayBooks() {
     const mainContainer = document.querySelector('.books');
 
     while (mainContainer.firstChild) {
       mainContainer.removeChild(mainContainer.firstChild);
     }
 
-    for (let i = 0; i < bookArray.length; i += 1) {
+    for (let i = 0; i < this.bookArray.length; i += 1) {
       const bookAttributes = ['title', 'author', 'rating', 'status'];
       const container = document.createElement('div');
       container.classList.add('book-card');
       mainContainer.appendChild(container);
 
       bookAttributes.forEach((tagClass) => {
-        createBookTag(tagClass, container, i);
+        this.createBookTag(tagClass, container, i);
       });
 
-      buildRemoveButton(container, mainContainer, bookArray[i]);
-      readStatus(container, bookArray[i]);
+      this.buildRemoveButton(container, mainContainer, this.bookArray[i]);
+      this.readStatus(container, this.bookArray[i]);
     }
   }
 
-  const addBook = (ev) => {
-    ev.preventDefault(); // to stop the form submitting
-    const book = Book();
+  addBook() {
+    const book = new Book();
     book.title = document.getElementById('title').value;
     book.author = document.getElementById('author').value;
     book.rating = document.getElementById('rating').value;
     book.status = document.getElementById('status').value;
-
-    bookArray.push(book);
+    console.log(this.bookArray);
+    this.bookArray.push(book);
     document.querySelector('form').reset();
 
-    displayBooks();
-    saveLibrary();
-  };
+    this.displayBooks();
+    this.saveLibrary();
+  }
 
-  return {
-    addBook,
-    displayBooks,
-    retrieveStorage,
-  };
-};
+}
 
-const library = (bookArray) => {
-  const libraryObj = Object.assign(Object.create(protoLibrary()), {
-    bookArray,
-  });
-
-  return libraryObj;
-};
-
-const firstLibrary = [];
-const myLibrary = library(firstLibrary);
+let firstLibrary = [];
+const myLibrary = new Library(firstLibrary);
 
 myLibrary.retrieveStorage();
 myLibrary.displayBooks();
 
 const submitButton = document.getElementById('submit');
-submitButton.addEventListener('click', myLibrary.addBook);
+
+submitButton.addEventListener('click', () => {
+  myLibrary.addBook()
+});
