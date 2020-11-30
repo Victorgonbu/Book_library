@@ -1,17 +1,3 @@
-// Class
-class Book {
-  constructor(title, author, rating, status) {
-    this.title = title;
-    this.author = author;
-    this.rating = rating;
-    this.status = status;
-  }
-  opositeStatus() {
-    if (this.status === 'read') return 'unread';
-    return 'read';
-  }
-}
-
 class Library {
   constructor(bookArray) {
     this.bookArray = bookArray;
@@ -30,7 +16,7 @@ class Library {
   saveLibrary() {
     localStorage.setItem('myLibrary', JSON.stringify(this.bookArray));
   }
-  
+
   readStatus(container, book) {
     const read = document.createElement('div');
     const readStatus = container.querySelector('.status');
@@ -102,24 +88,11 @@ class Library {
     book.author = document.getElementById('author').value;
     book.rating = document.getElementById('rating').value;
     book.status = document.getElementById('status').value;
-    console.log(this.bookArray);
+
     this.bookArray.push(book);
     document.querySelector('form').reset();
 
     this.displayBooks();
     this.saveLibrary();
   }
-
 }
-
-let firstLibrary = [];
-const myLibrary = new Library(firstLibrary);
-
-myLibrary.retrieveStorage();
-myLibrary.displayBooks();
-
-const submitButton = document.getElementById('submit');
-
-submitButton.addEventListener('click', () => {
-  myLibrary.addBook()
-});
